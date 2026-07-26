@@ -1,0 +1,13 @@
+Student Course Portal
+
+Home | Courses | Profile
+
+Welcome to Student Course Portal
+
+Manage your courses...
+
+Portal Statistics
+
+Courses Available: 12
+Enrolled: 3
+GPA: 3.8
