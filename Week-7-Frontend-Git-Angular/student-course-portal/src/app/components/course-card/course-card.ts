@@ -8,9 +8,9 @@ import {
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-
 import { HighlightDirective } from '../../directives/highlight';
 import { CreditLabelPipe } from '../../pipes/credit-label-pipe';
+import { EnrollmentService } from '../../services/enrollment';
 
 @Component({
   selector: 'app-course-card',
@@ -32,6 +32,10 @@ export class CourseCardComponent implements OnChanges {
 
   isExpanded = false;
 
+  constructor(
+    private enrollmentService: EnrollmentService
+  ) {}
+
   ngOnChanges(changes: SimpleChanges) {
     console.log(
       'Course changed:',
@@ -42,26 +46,42 @@ export class CourseCardComponent implements OnChanges {
   }
 
   get cardClasses() {
-  return {
-    'card--enrolled': this.course?.enrolled,
-    'card--full': (this.course?.credits ?? 0) >= 4,
-    expanded: this.isExpanded
-  };
-}
+    return {
+      'card--enrolled': this.course?.enrolled,
+      'card--full': (this.course?.credits ?? 0) >= 4,
+      expanded: this.isExpanded
+    };
+  }
 
   get borderColor() {
-
-  switch (this.course?.gradeStatus) {
-
-    case 'passed':
-      return 'green';
-
-    case 'failed':
-      return 'red';
-
-    default:
-      return 'gray';
+    switch (this.course?.gradeStatus) {
+      case 'passed':
+        return 'green';
+      case 'failed':
+        return 'red';
+      default:
+        return 'gray';
+    }
   }
-}
+
+  toggleEnrollment() {
+
+    if (this.enrollmentService.isEnrolled(this.course.id)) {
+
+      this.enrollmentService.unenroll(this.course.id);
+
+    } else {
+
+      this.enrollmentService.enroll(this.course.id);
+
+      this.enrollRequested.emit(this.course.id);
+
+    }
+
+  }
+
+  isEnrolled() {
+    return this.enrollmentService.isEnrolled(this.course.id);
+  }
 
 }

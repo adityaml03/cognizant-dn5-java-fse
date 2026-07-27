@@ -3,14 +3,14 @@
   [ngClass]="cardClasses"
   [ngStyle]="{'border-left':'6px solid ' + borderColor}">
 
-  <h3>{{ course?.name }}</h3>
+  <h3>{{ course.name }}</h3>
 
-  <p><b>Code:</b> {{ course?.code }}</p>
+  <p><b>Code:</b> {{ course.code }}</p>
 
-  <p><b>{{ course?.credits | creditLabel }}</b></p>
+  <p><b>{{ course.credits | creditLabel }}</b></p>
 
   <p>
-    <span [ngSwitch]="course?.gradeStatus">
+    <span [ngSwitch]="course.gradeStatus">
 
       <span *ngSwitchCase="'passed'" style="color:green">
         Passed
@@ -27,12 +27,12 @@
     </span>
   </p>
 
-  <button (click)="enrollRequested.emit(course.id)">
-    Enroll
+  <button (click)="toggleEnrollment()">
+    {{ isEnrolled() ? 'Unenroll' : 'Enroll' }}
   </button>
 
   <button (click)="isExpanded = !isExpanded">
-    Show Details
+    {{ isExpanded ? 'Hide Details' : 'Show Details' }}
   </button>
 
 </div>

@@ -1,9 +1,7 @@
 <h2>Available Courses</h2>
 
-<!-- Loading -->
 <p *ngIf="isLoading">Loading courses...</p>
 
-<!-- After loading -->
 <div *ngIf="!isLoading">
 
   <ng-container *ngIf="courses.length > 0; else noCourses">
