@@ -8,10 +8,9 @@ import { StudentProfile } from './pages/student-profile/student-profile';
   selector: 'app-root',
   standalone: true,
   imports: [
-    RouterOutlet,
-    Header,
-    StudentProfile
-  ],
+  RouterOutlet,
+  Header
+],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

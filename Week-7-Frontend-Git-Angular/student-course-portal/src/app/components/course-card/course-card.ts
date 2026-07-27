@@ -1,87 +1,30 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnChanges,
-  SimpleChanges
-} from '@angular/core';
-
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HighlightDirective } from '../../directives/highlight';
-import { CreditLabelPipe } from '../../pipes/credit-label-pipe';
-import { EnrollmentService } from '../../services/enrollment';
+import { Course } from '../../models/course.model';
+import { CourseService } from '../../services/course';
 
 @Component({
   selector: 'app-course-card',
   standalone: true,
-  imports: [
-    CommonModule,
-    HighlightDirective,
-    CreditLabelPipe
-  ],
+  imports: [CommonModule],
   templateUrl: './course-card.html',
   styleUrl: './course-card.css'
 })
-export class CourseCardComponent implements OnChanges {
+export class CourseCardComponent implements OnInit {
+  @Input() course?: Course;
+  isEnrolled: boolean = false;
 
-  @Input() course: any;
+  constructor(private courseService: CourseService) {}
 
-  @Output()
-  enrollRequested = new EventEmitter<number>();
-
-  isExpanded = false;
-
-  constructor(
-    private enrollmentService: EnrollmentService
-  ) {}
-
-  ngOnChanges(changes: SimpleChanges) {
-    console.log(
-      'Course changed:',
-      changes['course']?.previousValue,
-      '→',
-      changes['course']?.currentValue
-    );
-  }
-
-  get cardClasses() {
-    return {
-      'card--enrolled': this.course?.enrolled,
-      'card--full': (this.course?.credits ?? 0) >= 4,
-      expanded: this.isExpanded
-    };
-  }
-
-  get borderColor() {
-    switch (this.course?.gradeStatus) {
-      case 'passed':
-        return 'green';
-      case 'failed':
-        return 'red';
-      default:
-        return 'gray';
+  ngOnInit(): void {
+    if (this.course) {
+      this.isEnrolled = this.courseService.isEnrolled(this.course.id);
     }
   }
 
-  toggleEnrollment() {
-
-    if (this.enrollmentService.isEnrolled(this.course.id)) {
-
-      this.enrollmentService.unenroll(this.course.id);
-
-    } else {
-
-      this.enrollmentService.enroll(this.course.id);
-
-      this.enrollRequested.emit(this.course.id);
-
+  onEnrollClick(): void {
+    if (this.course) {
+      this.isEnrolled = this.courseService.toggleEnrollment(this.course.id);
     }
-
   }
-
-  isEnrolled() {
-    return this.enrollmentService.isEnrolled(this.course.id);
-  }
-
 }

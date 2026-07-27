@@ -1,13 +1,16 @@
-<h2>Enrolled Courses</h2>
+<div class="profile-container">
+  <h2>User Profile</h2>
+  <h3>Enrolled Courses</h3>
 
-<div *ngFor="let course of enrollmentService.getEnrolledCourses()">
+  <div *ngIf="enrolledCourses.length > 0">
+    <ul>
+      <li *ngFor="let course of enrolledCourses">
+        <strong>{{ course.name }}</strong> ({{ course.code }}) - {{ course.credits }} Credits
+      </li>
+    </ul>
+  </div>
 
-  <p>
-
-    {{ course.name }}
-
-    ({{ course.code }})
-
-  </p>
-
+  <div *ngIf="enrolledCourses.length === 0">
+    <p>You haven't enrolled in any courses yet.</p>
+  </div>
 </div>

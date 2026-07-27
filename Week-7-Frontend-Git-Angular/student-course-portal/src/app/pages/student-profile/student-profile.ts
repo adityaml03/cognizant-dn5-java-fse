@@ -1,19 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { EnrollmentService } from '../../services/enrollment';
+import { CourseService } from '../../services/course';
+import { Course } from '../../models/course.model';
 
 @Component({
   selector: 'app-student-profile',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './student-profile.html',
+  templateUrl: './student-profile.html', // Fixed filename reference
   styleUrl: './student-profile.css'
 })
-export class StudentProfile {
+export class StudentProfile implements OnInit { // Fixed class name export
+  enrolledCourses: Course[] = [];
 
-  constructor(
-    public enrollmentService: EnrollmentService
-  ) {}
+  constructor(private courseService: CourseService) {}
 
+  ngOnInit(): void {
+    this.enrolledCourses = this.courseService.getEnrolledCourses();
+  }
 }
