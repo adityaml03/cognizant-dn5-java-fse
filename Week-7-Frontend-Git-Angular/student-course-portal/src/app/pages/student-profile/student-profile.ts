@@ -1,41 +1,40 @@
-// src/app/pages/student-profile/student-profile.ts
-
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { forkJoin } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { Course } from '../../models/course.model';
-import { CourseService } from '../../services/course';
+import { selectEnrolledCourses } from '../../store/enrollment/enrollment.selectors';
+import { CourseCardComponent } from '../../components/course-card/course-card';
+
 @Component({
   selector: 'app-student-profile',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './student-profile.html',
-  styleUrls: ['./student-profile.css']
+  imports: [CommonModule, CourseCardComponent],
+  template: `
+    <div class="container my-4">
+      <h2>User Profile</h2>
+      <h3>Enrolled Courses</h3>
+
+      <ng-container *ngIf="enrolledCourses$ | async as enrolledCourses">
+        <div *ngIf="enrolledCourses.length === 0" class="alert alert-warning">
+          You haven't enrolled in any courses yet.
+        </div>
+
+        <div class="row" *ngIf="enrolledCourses.length > 0">
+          <div class="col-md-4 mb-3" *ngFor="let course of enrolledCourses">
+            <app-course-card [course]="course"></app-course-card>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  `
 })
-export class StudentProfile implements OnInit {
-  enrolledCourses: Course[] = [];
+export class StudentProfileComponent {
+  private store = inject(Store);
 
-  constructor(private courseService: CourseService) {}
-
-  ngOnInit(): void {
-    const enrolledIds: (string | number)[] = this.courseService.getEnrolledCourses();
-
-    if (!enrolledIds || enrolledIds.length === 0) {
-      this.enrolledCourses = [];
-      return;
-    }
-
-    // Map IDs to course observable requests
-    const courseRequests = enrolledIds.map((id: string | number) => 
-      this.courseService.getCourseById(id)
-    );
-
-    // Fetch all courses simultaneously
-    forkJoin<Course[]>(courseRequests).subscribe({
-      next: (courses: Course[]) => {
-        this.enrolledCourses = courses;
-      },
-      error: (err) => console.error('Error fetching enrolled courses:', err)
-    });
-  }
+  // Cross-slice selector automatically combines Course data + Enrolled IDs!
+  enrolledCourses$: Observable<Course[]> = this.store.select(selectEnrolledCourses);
 }
+
+// Alias export to satisfy imports expecting 'StudentProfile'
+export { StudentProfileComponent as StudentProfile };

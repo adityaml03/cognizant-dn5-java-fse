@@ -1,54 +1,42 @@
-// src/app/pages/course-list/course-list.ts
-
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CourseService } from '../../services/course';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { Course } from '../../models/course.model';
-import { CourseCard } from '../../components/course-card/course-card';
+import { loadCourses } from '../../store/course/course.actions';
+import { selectAllCourses, selectCoursesLoading, selectCoursesError } from '../../store/course/course.selectors';
+import { CourseCardComponent } from '../../components/course-card/course-card'; 
 
 @Component({
   selector: 'app-course-list',
   standalone: true,
-  imports: [CommonModule, CourseCard],
-  templateUrl: './course-list.html',
-  styleUrls: ['./course-list.css']
-})
-export class CourseList implements OnInit {
-  courses: Course[] = [];
-  isLoading: boolean = true;
-  enrolledIds: Set<number | string> = new Set();
+  imports: [CommonModule, CourseCardComponent],
+  template: `
+    <div class="container my-4">
+      <h2>Available Courses</h2>
 
-  constructor(private courseService: CourseService) {}
+      <div *ngIf="loading$ | async" class="alert alert-info">Loading courses...</div>
+      <div *ngIf="error$ | async as error" class="alert alert-danger">{{ error }}</div>
+
+      <div class="row" *ngIf="courses$ | async as courses">
+        <div class="col-md-4 mb-3" *ngFor="let course of courses">
+          <app-course-card [course]="course"></app-course-card>
+        </div>
+      </div>
+    </div>
+  `
+})
+export class CourseListComponent implements OnInit {
+  private store = inject(Store);
+
+  courses$: Observable<Course[]> = this.store.select(selectAllCourses);
+  loading$: Observable<boolean> = this.store.select(selectCoursesLoading);
+  error$: Observable<string | null> = this.store.select(selectCoursesError);
 
   ngOnInit(): void {
-    this.loadCourses();
-  }
-
-  loadCourses(): void {
-    this.isLoading = true;
-    this.courseService.getCourses().subscribe({
-      next: (data: Course[]) => {
-        this.courses = data || [];
-        this.syncEnrolledState();
-        this.isLoading = false;
-      },
-      error: (err: unknown) => {
-        console.error('Error fetching courses:', err);
-        this.isLoading = false;
-      }
-    });
-  }
-
-  syncEnrolledState(): void {
-    this.enrolledIds = new Set(this.courseService.getEnrolledCourses());
-  }
-
-  isCourseEnrolled(courseId: number | string): boolean {
-    return this.enrolledIds.has(courseId);
-  }
-
-  onEnroll(courseId: number | string): void {
-    this.courseService.toggleEnrollment(courseId);
-    this.syncEnrolledState(); // Re-creates the Set reference so Angular updates [isEnrolled]
+    this.store.dispatch(loadCourses());
   }
 }
+
+// Alias export to satisfy route imports
+export { CourseListComponent as CourseList };
