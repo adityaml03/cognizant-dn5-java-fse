@@ -1,22 +1,18 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { StudentProfile } from './student-profile';
+import { TestBed } from '@angular/core/testing';
+import { StudentProfileComponent } from './student-profile';
+import { provideMockStore } from '@ngrx/store/testing';
 
 describe('StudentProfile', () => {
-  let component: StudentProfile;
-  let fixture: ComponentFixture<StudentProfile>;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StudentProfile],
+      imports: [StudentProfileComponent],
+      providers: [provideMockStore({})]
     }).compileComponents();
-
-    fixture = TestBed.createComponent(StudentProfile);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
   });
 
   it('should create', () => {
+    const fixture = TestBed.createComponent(StudentProfileComponent);
+    const component = fixture.componentInstance;
     expect(component).toBeTruthy();
   });
 });
