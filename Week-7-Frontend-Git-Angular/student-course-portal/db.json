@@ -1,0 +1,34 @@
+{
+  "courses": [
+    {
+      "id": "1",
+      "name": "Angular Fundamentals",
+      "description": "Learn components, services, directives, and routing in Angular.",
+      "instructor": "Dr. Smith",
+      "duration": "6 Weeks",
+      "code": "CS101",
+      "credits": 3,
+      "gradeStatus": "Enrolled"
+    },
+    {
+      "id": "2",
+      "name": "Java Full Stack Development",
+      "description": "Master Spring Boot REST APIs and integrate with modern web frontends.",
+      "instructor": "Prof. Johnson",
+      "duration": "10 Weeks",
+      "code": "CS102",
+      "credits": 4,
+      "gradeStatus": "Enrolled"
+    },
+    {
+      "id": "3",
+      "name": "Database Management Systems",
+      "description": "Understand relational database schemas, SQL queries, and normalization.",
+      "instructor": "Dr. Alan",
+      "duration": "8 Weeks",
+      "code": "CS103",
+      "credits": 3,
+      "gradeStatus": "Available"
+    }
+  ]
+}

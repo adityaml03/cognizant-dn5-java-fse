@@ -1,19 +1,16 @@
-<div class="course-container">
-  <h2>Available Courses</h2>
+<h2>Available Courses</h2>
 
-  <div *ngIf="isLoading">
-    <p>Loading courses...</p>
-  </div>
+<div *ngIf="isLoading">Loading courses...</div>
 
-  <div *ngIf="!isLoading && courses.length > 0" class="course-grid">
-    <app-course-card 
-      *ngFor="let course of courses" 
-      [course]="course"
-      (enroll)="onEnroll($event)">
-    </app-course-card>
-  </div>
+<div *ngIf="!isLoading && courses.length > 0" class="course-grid">
+  <app-course-card
+    *ngFor="let course of courses"
+    [course]="course"
+    [isEnrolled]="isCourseEnrolled(course.id)"
+    (enroll)="onEnroll($event)">
+  </app-course-card>
+</div>
 
-  <div *ngIf="!isLoading && courses.length === 0">
-    <p>No courses available.</p>
-  </div>
+<div *ngIf="!isLoading && courses.length === 0">
+  No courses available.
 </div>

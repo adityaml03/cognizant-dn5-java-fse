@@ -1,11 +1,11 @@
-<div *ngIf="course" class="card">
+<div class="course-card">
   <h3>{{ course.name }}</h3>
-  <p><b>Code:</b> {{ course.code }}</p>
-  <p><b>Credits:</b> {{ course.credits }}</p>
+  <p>{{ course.description }}</p>
+  <p><strong>Instructor:</strong> {{ course.instructor }}</p>
+  <p><strong>Duration:</strong> {{ course.duration }}</p>
 
-  <!-- Dynamic Button Text and Style -->
   <button 
-    [ngClass]="isEnrolled ? 'btn-unenroll' : 'btn-enroll'" 
+    [ngClass]="isEnrolled ? 'btn-unenroll' : 'btn-enroll'"
     (click)="onEnrollClick()">
     {{ isEnrolled ? 'Unenroll' : 'Enroll' }}
   </button>

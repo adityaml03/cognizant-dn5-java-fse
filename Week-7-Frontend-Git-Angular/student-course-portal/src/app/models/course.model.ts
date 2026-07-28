@@ -1,8 +1,10 @@
 export interface Course {
-  id: number;
+  id: number | string;
   name: string;
-  code: string;
-  credits: number;
-  gradeStatus: 'passed' | 'failed' | 'pending';
-  enrolled: boolean;
+  description: string;
+  instructor: string;
+  duration: string;
+  code?: string;
+  credits?: number;
+  gradeStatus?: string;
 }

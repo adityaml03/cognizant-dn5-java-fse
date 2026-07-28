@@ -1,46 +1,35 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+// src/app/pages/home/home.ts
+
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CourseService } from '../../services/course';
+import { Course } from '../../models/course.model';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './home.html',
-  styleUrl: './home.css',
+  styleUrls: ['./home.css']
 })
-export class Home implements OnInit, OnDestroy {
-
-  portalName = 'Student Course Portal';
-  isPortalActive = true;
-  message = '';
-  searchTerm = '';
-
-  courseCount = 0;
+export class Home implements OnInit {
+  portalName: string = 'Digital Nurture Portal';
+  isPortalActive: boolean = true;
+  message: string = '';
+  searchTerm: string = '';
+  courseCount: number = 0;
 
   constructor(private courseService: CourseService) {}
 
-  // [property] is one-way binding (component → view)
-  // [(ngModel)] is two-way binding (component ↔ view)
-
-  ngOnInit() {
-
-    console.log('HomeComponent initialised — courses loaded');
-
-    this.courseCount = this.courseService.getCourses().length;
-
+  ngOnInit(): void {
+    this.courseService.getCourses().subscribe({
+      next: (courses: Course[]) => this.courseCount = courses.length,
+      error: (err: unknown) => console.error('Failed to fetch home courses:', err)
+    });
   }
 
-  ngOnDestroy() {
-
-    console.log('HomeComponent destroyed');
-
+  onEnrollClick(): void {
+    this.message = 'Enrollment requested!';
   }
-
-  onEnrollClick() {
-
-    this.message = 'Enrollment opened!';
-
-  }
-
 }

@@ -1,43 +1,54 @@
+// src/app/pages/course-list/course-list.ts
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router'; // <-- Added RouterModule
 import { CourseService } from '../../services/course';
-import { CourseCardComponent } from '../../components/course-card/course-card';
+import { Course } from '../../models/course.model';
+import { CourseCard } from '../../components/course-card/course-card';
 
 @Component({
   selector: 'app-course-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, CourseCardComponent], // <-- Added RouterModule here
+  imports: [CommonModule, CourseCard],
   templateUrl: './course-list.html',
-  styleUrl: './course-list.css'
+  styleUrls: ['./course-list.css']
 })
 export class CourseList implements OnInit {
-  courses: any[] = [];
+  courses: Course[] = [];
   isLoading: boolean = true;
+  enrolledIds: Set<number | string> = new Set();
 
   constructor(private courseService: CourseService) {}
 
   ngOnInit(): void {
-    const result: any = this.courseService.getCourses();
-
-    if (result && typeof result.subscribe === 'function') {
-      result.subscribe({
-        next: (data: any) => {
-          this.courses = data;
-          this.isLoading = false;
-        },
-        error: (err: any) => {
-          console.error('Error fetching course list:', err);
-          this.isLoading = false;
-        }
-      });
-    } else {
-      this.courses = result || [];
-      this.isLoading = false;
-    }
+    this.loadCourses();
   }
 
-  onEnroll(course: any): void {
-    alert(`Enrolled in ${course.name} successfully!`);
+  loadCourses(): void {
+    this.isLoading = true;
+    this.courseService.getCourses().subscribe({
+      next: (data: Course[]) => {
+        this.courses = data || [];
+        this.syncEnrolledState();
+        this.isLoading = false;
+      },
+      error: (err: unknown) => {
+        console.error('Error fetching courses:', err);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  syncEnrolledState(): void {
+    this.enrolledIds = new Set(this.courseService.getEnrolledCourses());
+  }
+
+  isCourseEnrolled(courseId: number | string): boolean {
+    return this.enrolledIds.has(courseId);
+  }
+
+  onEnroll(courseId: number | string): void {
+    this.courseService.toggleEnrollment(courseId);
+    this.syncEnrolledState(); // Re-creates the Set reference so Angular updates [isEnrolled]
   }
 }

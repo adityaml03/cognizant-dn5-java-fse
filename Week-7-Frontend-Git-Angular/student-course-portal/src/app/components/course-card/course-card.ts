@@ -1,30 +1,24 @@
-import { Component, Input, OnInit } from '@angular/core';
+// src/app/components/course-card/course-card.ts
+
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Course } from '../../models/course.model';
-import { CourseService } from '../../services/course';
 
 @Component({
   selector: 'app-course-card',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './course-card.html',
-  styleUrl: './course-card.css'
+  styleUrls: ['./course-card.css']
 })
-export class CourseCardComponent implements OnInit {
-  @Input() course?: Course;
-  isEnrolled: boolean = false;
-
-  constructor(private courseService: CourseService) {}
-
-  ngOnInit(): void {
-    if (this.course) {
-      this.isEnrolled = this.courseService.isEnrolled(this.course.id);
-    }
-  }
+export class CourseCard {
+  @Input() course!: Course;
+  @Input() isEnrolled: boolean = false;
+  @Output() enroll = new EventEmitter<number | string>();
 
   onEnrollClick(): void {
-    if (this.course) {
-      this.isEnrolled = this.courseService.toggleEnrollment(this.course.id);
+    if (this.course?.id != null) {
+      this.enroll.emit(this.course.id);
     }
   }
 }
